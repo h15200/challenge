@@ -178,7 +178,7 @@ const InitializeCheatGame = (): GameState => {
   // change pillTimer to last forever.
   const pillTimer:GameBoardItemTimer = { timer: Infinity };
   // const PacmanStore: Pacman = new Pacman({id: 'DUMMY', x: 0, y: 0, type: GameBoardPieceType.EMPTY, moves: {}}, items, pillTimer);
-  const PacmanStore: Pacman = new SuperPacman({id: 'DUMMY', x: 0, y: 0, type: GameBoardPieceType.EMPTY, moves: {}}, items, pillTimer);
+  const PacmanStore: SuperPacman = new SuperPacman({id: 'DUMMY', x: 0, y: 0, type: GameBoardPieceType.EMPTY, moves: {}}, items, pillTimer);
 
   for (let y = 0; y < gameBoard.length; y += 1) {
 

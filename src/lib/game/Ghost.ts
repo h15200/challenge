@@ -93,7 +93,8 @@ class Ghost extends Item implements GameBoardItem {
     }
 
     const move = Math.floor(Math.random() * newMovesIdx.length);
-
+    // console.log('piece:', newMoves[newMovesIdx[move]]);
+    // console.log('direction', GameDirectionMap[newMovesIdx[move]]);
     return {piece: newMoves[newMovesIdx[move]], direction: GameDirectionMap[newMovesIdx[move]]};
 
   }

@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   button: {
     marginBottom: theme.spacing(1)
+  },
+  cheatButton: {
+    marginTop: theme.spacing(15),
+    marginBottom: theme.spacing(1)
   }
 }));
 
@@ -74,7 +78,7 @@ const Controls: React.FC<ControlProps> = ({score, iteration, runningScore, dispa
 
       <Button onClick={handleNewGame} className={styles.button} fullWidth color="primary" variant="contained">New Game</Button>
       <Button onClick={handleResetScore} className={styles.button} fullWidth variant="contained">Reset Score</Button>
-      <Button onClick={handleCheatGame} className={styles.button} fullWidth variant="contained">Cheat</Button>
+      <Button onClick={handleCheatGame} className={styles.cheatButton} fullWidth color="secondary" variant="contained">Cheat</Button>
     </>
   );
 };

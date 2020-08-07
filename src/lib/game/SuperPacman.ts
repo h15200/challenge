@@ -1,39 +1,16 @@
-import { GameBoardItemType, KeyToGameDirection, GameDirectionMap, GameDirectionToKeys, GameDirection, pillMax } from '../Map';
+import { GameBoardItemType,GameDirectionMap,GameDirection, pillMax, GameDirectionReverseMap } from '../Map';
 import Item from './Item';
 
 class SuperPacman extends Item implements GameBoardItem {
 
   type:GameBoardItemType = GameBoardItemType.PACMAN;
 
-  desiredMove: string | false = false;
+  pursuit: string | boolean = false;
 
   score:number = 0;
 
-  constructor(piece:GameBoardPiece, items:GameBoardItem[][], pillTimer:GameBoardItemTimer) {
-    super(piece, items, pillTimer);
 
-    // Bind context for callback events
-    this.handleKeyPress = this.handleKeyPress.bind(this);
 
-    // Add a listener for keypresses for this object
-    window.addEventListener('keypress', this.handleKeyPress, false);
-
-  }
-
-  /**
-   * Handle a keypress from the keyboard
-   * 
-   * @method handleKeyPress
-   * @param {KeyboardEvent} e Input event
-   */
-  handleKeyPress(e: KeyboardEvent): void {
-
-    if (KeyToGameDirection[e.key.toUpperCase()]) {
-      this.desiredMove = KeyToGameDirection[e.key.toUpperCase()];
-    }
-
-  }
-  
   /**
    * Returns the next move from the keyboard input
    * 
@@ -43,39 +20,78 @@ class SuperPacman extends Item implements GameBoardItem {
   getNextMove(): GameBoardItemMove | boolean {
 
     const { moves } = this.piece;
+    // moves is an object of possible moves (can't go into walls)
 
-    let move: GameBoardItemMove | false = false;
+    let dangerSeen:boolean = false;
 
-    // If there is a keyboard move, use it and clear it
-    if (this.desiredMove) {    
-      if (moves[this.desiredMove]) {
-        move = {piece: moves[this.desiredMove], direction: GameDirectionMap[this.desiredMove]};
-        this.desiredMove = false;
+    let reversePiece:GameBoardPiece = this.piece;
+    let reverseDirection:string = GameDirectionMap[this.direction];
+
+    const newMoves:GameBoardItemMoves = {};
+
+    for (const idx in moves) {
+      if (idx) {
+        const move = moves[idx];
+        // only if the next position doesn't have ghost 
+        if (this.items[move.y][move.x].type !== GameBoardItemType.GHOST) {
+
+          const ghost = this.findItem(idx, GameBoardItemType.GHOST);
+          const biscuit = this.findItem(idx, GameBoardItemType.BISCUIT);
+          let dangerAhead = false;
+
+          // Check if pacman is ahead and dangerous (less than 5 sec left on timer)
+          if (ghost && typeof ghost.pillTimer === 'number' && ghost.pillTimer < 5) {
+            dangerAhead = true;  
+            dangerSeen = true;
+          }
+
+          // If ghost is on timer
+          if (biscuit) {
+            this.pursuit = idx;
+            return {piece: move, direction: GameDirectionMap[idx] };
+          }
+
+          // If there is no danger ahead, and we aren't going backwards, go towards biscuit
+          if (!dangerAhead && GameDirectionMap[GameDirectionReverseMap[idx]] !== this.direction) {
+            newMoves[idx] = move;
+          } else if (GameDirectionMap[GameDirectionReverseMap[idx]] === this.direction) {
+            reversePiece = move;
+            reverseDirection = idx;
+          }
+
+        }
       }
     }
-    
-    // Otherwise, continue in the last direction
-    if (!move && this.direction !== GameDirection.NONE) {
-      const key = GameDirectionToKeys(this.direction);
-      if (moves[key]) {
-        move = {piece: moves[key], direction: this.direction};
-      }
+
+    if (dangerSeen) {
+      newMoves[reverseDirection] = reversePiece;
     }
 
-    
+    const newMovesIdx = Object.keys(newMoves);
 
-    return move;
-    
+    if (newMovesIdx.length < 1) return false;
+
+    // Increase chance of moving to biscuit
+    if (this.pursuit && newMovesIdx.length > 1) {
+      if (newMovesIdx.indexOf(this.pursuit.toString()) !== -1) {
+        newMovesIdx.push(this.pursuit.toString());
+      }
+      this.pursuit = false;
+    }
+
+    const move = Math.floor(Math.random() * newMovesIdx.length);
+    return {piece: newMoves[newMovesIdx[move]], direction: GameDirectionMap[newMovesIdx[move]]};
 
   }
 
-  /**
-   * Move Pacman and "eat" the item
-   * 
-   * @method move
-   * @param {GameBoardPiece} piece 
-   * @param {GameDirection} direction 
-   */
+
+  //   /**
+  //    * Move Pacman and "eat" the item
+  //    * 
+  //    * @method move
+  //    * @param {GameBoardPiece} piece 
+  //    * @param {GameDirection} direction 
+  //    */
   move(piece: GameBoardPiece, direction: GameDirection):void {
 
     const item = this.items[piece.y][piece.x];
@@ -98,7 +114,6 @@ class SuperPacman extends Item implements GameBoardItem {
     this.setPiece(piece, direction);
     this.items[piece.y][piece.x] = this;
   }
-
 }
 
 export default SuperPacman;
