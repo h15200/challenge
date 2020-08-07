@@ -2,6 +2,7 @@ import { GameBoardItemType, GameBoardPieceType, GameMode, GhostColor, CheatMode 
 import Ghost from './game/Ghost';
 import Pacman from './game/Pacman';
 import SuperPacman from './game/SuperPacman';
+import SuperDuperPacman from './game/SuperDuperPacman';
 
 /** Enumerate the board pieces */
 enum gameMap {
@@ -164,7 +165,7 @@ const InitializeGame = (): GameState => {
   return { mode, turn, GhostStartPoints, layout, items, GhostStore, PacmanStore, pillTimer, cheatMode };
 };
 
-// only difference from regular game is const pillTimer and PacmanStore
+// only difference from regular game is PacmanStore
 const InitializeCheatGame = (): GameState => {
 
   let layout: GameBoardPiece[][] = [];
@@ -175,8 +176,7 @@ const InitializeCheatGame = (): GameState => {
   const turn = 0;
   const mode: GameMode = GameMode.PLAYING;
   const cheatMode: CheatMode = CheatMode.ON;
-  // change pillTimer to last forever.
-  const pillTimer:GameBoardItemTimer = { timer: Infinity };
+  const pillTimer:GameBoardItemTimer = { timer: 0 };
   // const PacmanStore: Pacman = new Pacman({id: 'DUMMY', x: 0, y: 0, type: GameBoardPieceType.EMPTY, moves: {}}, items, pillTimer);
   const PacmanStore: SuperPacman = new SuperPacman({id: 'DUMMY', x: 0, y: 0, type: GameBoardPieceType.EMPTY, moves: {}}, items, pillTimer);
 
@@ -230,7 +230,72 @@ const InitializeCheatGame = (): GameState => {
 
   return { mode, turn, GhostStartPoints, layout, items, GhostStore, PacmanStore, pillTimer, cheatMode };
 };
+// change pill, pacmanStore is superduperPacman
+const InitializeSuperCheatGame = (): GameState => {
 
-export { InitializeGame, InitializeCheatGame };
+  let layout: GameBoardPiece[][] = [];
+  const items: GameBoardItem[][] = [];
+  const GhostStartPoints: GameBoardPiece[] = [];
+  const GhostStore = [];
+  let colorIdx = 0;
+  const turn = 0;
+  const mode: GameMode = GameMode.PLAYING;
+  const cheatMode: CheatMode = CheatMode.SUPER;
+  // change pillTimer to last forever.
+  const pillTimer:GameBoardItemTimer = { timer: Infinity };
+  const PacmanStore: SuperDuperPacman = new SuperPacman({id: 'DUMMY', x: 0, y: 0, type: GameBoardPieceType.EMPTY, moves: {}}, items, pillTimer);
+
+  for (let y = 0; y < gameBoard.length; y += 1) {
+
+    const layoutRow:GameBoardPiece[] = [];
+    const itemsRow:GameBoardItem[] = [];
+
+    for (let x = 0; x < gameBoard[y].length; x += 1) {
+
+      const val = gameBoard[y][x];
+      const id = `PIECE::${y}::${x}`;
+
+      let item:GameBoardItem = { type: GameBoardItemType.EMPTY };
+      const piece:GameBoardPiece = {
+        id, y, x, type: GameBoardPieceType.EMPTY, moves: {}
+      };
+
+      switch (val) {
+        case gameMap.WALL:
+          piece.type = GameBoardPieceType.WALL;
+          break;
+        case gameMap.BISCUIT:
+          item = { type: GameBoardItemType.BISCUIT };
+          break;
+        case gameMap.PILL:
+          item = { type: GameBoardItemType.PILL };
+          break;
+        case gameMap.PACMAN:
+          PacmanStore.setPiece(piece);
+          item = PacmanStore;
+          break;    
+        case gameMap.GHOST:
+          GhostStartPoints.push(piece);
+          item = new Ghost(piece, items, pillTimer, GhostStartPoints, GhostColorMap[colorIdx]);
+          colorIdx += 1;
+          GhostStore.push(item);
+          break;             
+        default: break;
+      }
+
+      layoutRow.push(piece);
+      itemsRow.push(item);
+    }
+
+    layout.push(layoutRow);
+    items.push(itemsRow);
+  }
+
+  layout = ProcessLayout(layout);
+
+  return { mode, turn, GhostStartPoints, layout, items, GhostStore, PacmanStore, pillTimer, cheatMode };
+};
+
+export { InitializeGame, InitializeCheatGame, InitializeSuperCheatGame };
 
 export default InitializeGame;

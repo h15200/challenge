@@ -9,32 +9,12 @@
 - make cheatMode Redux state
 - make Tic action call INIT_CHEAT if game if finished automatically if iteration is less than 100
 - adjust superpacman behavior to avoid ghosts when dangerous and find biscuits
-
-## Notes
-- piece.moves is an object of possible directions based on wall position. inside each direction are more nested possible directions based on the new position
-
-## TODOS:
-alter behavior of super pacman
-Pacman is an extension of Item. 
-Items have the properties:
-- this.piece = 1 (0 is WALL, 1 is NON WALL)
-- this.items 
-
-1.
-
-
-3. Don't forget to self destruct if there are no more biscuits or cherries to end game
-4. Make a new feature that runs super pacman 100 times. Make a new event handler inside components/game/Game.tsx that speeds up tic
-5. Refactor InitializeGame inside Game.ts so that it can swap out pacman and SuperPacman and SuperPacman100 on button click.
-
-Extension:
-Make Invincible Pacman (pill Infinity, seek ghosts)
-New Button
+- make superduper pacman
 
 ## Things I learned
 
 1. set / clearInterval inside useEffect of controls to change tic speed for different game modes 
-2. TS object undefined error when using iteration state
+2. TS object undefined error when using iteration state - type guard
 3. Proper implementation of TS with redux and react
 
 

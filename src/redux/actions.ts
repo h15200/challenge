@@ -4,6 +4,7 @@ export enum ActionTypes {
   INIT = 2,
   RESET = 3,
   INIT_CHEAT = 4,
+  INIT_SUPER_CHEAT = 5,
 }
 
 export const initGame = () => ({
@@ -30,6 +31,10 @@ export const tic = () => ({
 
 export const initCheatGame = () => ({
   type: ActionTypes.INIT_CHEAT,
+  payload: {}
+});
+export const initSuperCheatGame = () => ({
+  type: ActionTypes.INIT_SUPER_CHEAT,
   payload: {}
 });
 

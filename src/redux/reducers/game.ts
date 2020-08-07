@@ -1,5 +1,5 @@
 import { ActionTypes } from '../actions';
-import { InitializeGame, InitializeCheatGame } from '../../lib/Game';
+import { InitializeGame, InitializeCheatGame, InitializeSuperCheatGame } from '../../lib/Game';
 import { GameBoardItemType, GameMode, CheatMode } from '../../lib/Map';
 
 /** Holds initial state */
@@ -28,6 +28,8 @@ const gameReducer = (state:GameState = initialState, action: ReduxAction): GameS
       return {...state, ...action.payload };
 
     case ActionTypes.TIC:
+      // if you're in super cheat mode, pillTimer is always above 1
+      if (state.cheatMode === CheatMode.SUPER) pillTimer.timer = 100;
       // if you're in cheat mode and it's done, run it again
       if (mode === GameMode.FINISHED && state.cheatMode === CheatMode.ON && iteration && iteration < 100) {
 
@@ -82,6 +84,11 @@ const gameReducer = (state:GameState = initialState, action: ReduxAction): GameS
       runningScore += PacmanStore.score;
       iteration = (iteration || 0) + 1;
       return {...InitializeCheatGame(), runningScore, iteration};
+
+    case ActionTypes.INIT_SUPER_CHEAT:
+      runningScore += PacmanStore.score;
+      iteration = (iteration || 0) + 1;
+      return {...InitializeSuperCheatGame(), runningScore, iteration};
 
     default:
       return state;
