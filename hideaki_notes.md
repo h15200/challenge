@@ -1,5 +1,13 @@
+## To start
+
+npm install
+npm start
+click on "cheat" or "super cheat"
+"cheat" will iterate 100 times (sped up) under regular rules
+"super cheat" will not end
+
 ## Finished Tasks
-- Get very high level understanding of the implementation of the game
+- Get high level understanding of the implementation of the game
 - Figure out what the key files are
 - make new SuperPacman.ts file
 - swap PacmanStore to point to an instance of SuperPacman instead of Pacman, test behavior
