@@ -8,7 +8,10 @@
 - make adjustable tic by moving functionality to Controls with setInterval, clearInterval inside useEffect along with local useState hook
 - make cheatMode Redux state
 - make Tic action call INIT_CHEAT if game if finished automatically if iteration is less than 100
+- adjust superpacman behavior to avoid ghosts when dangerous and find biscuits
 
+## Notes
+- piece.moves is an object of possible directions based on wall position. inside each direction are more nested possible directions based on the new position
 
 ## TODOS:
 alter behavior of super pacman
